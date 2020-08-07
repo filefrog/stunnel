@@ -13,7 +13,6 @@ services:
     image: filefrog/stunnel
     volumes:
       - '$PWD/client.conf:/etc/stunnel/stunnel.conf'
-      - '$PWD/cert.pem:/etc/stunnel/cert.pem'
 
   client:
     image: redis

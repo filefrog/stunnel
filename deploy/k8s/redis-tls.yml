@@ -23,7 +23,6 @@ data:
   stunnel.conf: |
     foreground = yes
     client = yes
-    cert = /etc/stunnel/tls/cert.pem
     pid = /var/run/stunnel.pid
     [redis]
     accept = 127.0.0.1:6379
@@ -105,10 +104,6 @@ spec:
         - name: client-conf
           configMap:
             name: client-conf
-        - name: tls-cert
-          configMap:
-            name: tls-cert
-            defaultMode: 0400
 
       containers:
         - name: stunnel
@@ -117,8 +112,6 @@ spec:
           volumeMounts:
             - name: client-conf
               mountPath: /etc/stunnel
-            - name: tls-cert
-              mountPath: /etc/stunnel/tls
 
         - name: client
           image: redis
