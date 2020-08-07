@@ -1,0 +1,33 @@
+version: '3'
+services:
+  redis:
+    image: redis
+
+  secure-redis:
+    image: filefrog/stunnel
+    volumes:
+      - '$PWD/server.conf:/etc/stunnel/stunnel.conf'
+      - '$PWD/cert.pem:/etc/stunnel/cert.pem'
+
+  sort-of-local-host:
+    image: filefrog/stunnel
+    volumes:
+      - '$PWD/client.conf:/etc/stunnel/stunnel.conf'
+      - '$PWD/cert.pem:/etc/stunnel/cert.pem'
+
+  client:
+    image: redis
+    environment:
+      REDIS_ENDPOINT: redis://sperl:6381
+    command:
+      - /bin/sh
+      - -c
+      - |
+        trap 'exit 1' INT TERM QUIT
+        while true; do
+          date
+          redis-cli -u redis://sort-of-local-host:6381 set foo bar
+          sleep 1
+          redis-cli -u redis://sort-of-local-host:6381 get foo
+          sleep 1
+        done
